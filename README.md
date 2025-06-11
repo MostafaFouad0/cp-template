@@ -1,2 +1,2 @@
 # cp-template
-cp-template for ECPC/ACPC
+El Gharbia Lmokafa7t Eldokhan template 2025
