@@ -1,4 +1,6 @@
 //to check if there is a path that each edges visited exactly once (for a connected component)
+//if the degrees of all nodes are even : any start will be a solution
+//if the degrees of all nodes are even but exactly two odd : one of the two odds will be the start (it is impossible to have one odd degree)
 
 int const N = 4e5 + 1, M = 4e5 + 1; //N->nodes , M->edges
 int head[N], nxt[M], to[M], ne, n, sz;
@@ -31,7 +33,10 @@ void euler(int u) {
     }
 }
 
-bool iseuler() {
+bool geteuler() {
     int cnt = count(evenDeg, evenDeg + n, 1);
-    return cnt <= 2;
+    if (cnt > 2) return false;
+    int s = cnt ? find(evenDeg, evenDeg + n, 1) - evenDeg : 0;
+    euler(s);
+    return 1;
 }
