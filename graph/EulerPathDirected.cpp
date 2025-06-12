@@ -1,7 +1,7 @@
 //if degdiff: in - out : equal 0 for each node -> any start is valid
 //if degdiff equal 0 for each node except two and one of them have defdiff=1 -> that will be the start                    : 
 int const N = 4e5 + 1, M = 4e5 + 1;
-int head[N], nxt[M], to[M], ne, n, sz;
+int head[N], nxt[M], to[M], ne, n, m, sz;
 
 int degDiff[N];
 
