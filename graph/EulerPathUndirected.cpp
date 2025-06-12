@@ -40,3 +40,21 @@ bool geteuler() {
     euler(s);
     return 1;
 }
+
+signed main(){
+    init();
+    vid++;
+    for (int i = 0; i < n; ++i) {
+        int U, V;
+        addedge(U, V);
+        addedge(V, U);
+        evenDeg[U] ^= 1;
+        evenDeg[V] ^= 1;
+    }
+
+    if(geteuler() and sz==m){ //m->number of edges
+        for (int i = sz - 1; ~i; --i) cout << ans[i] / 2 + 1 << ' ';
+    } else {
+        cout<<-1;
+    }
+}
