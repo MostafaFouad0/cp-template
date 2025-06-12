@@ -3,7 +3,7 @@
 int const N = 4e5 + 1, M = 4e5 + 1;
 int head[N], nxt[M], to[M], ne, n, sz;
 
-bool degDiff[N];
+int degDiff[N];
 
 void init() {
     memset(head, -1, n * sizeof head[0]);
