@@ -1,46 +1,71 @@
 #define ll long long
 #define int long long
 
-int const N = 2e5 + 1, M = 1e9 + 7, B = 317;
+int const N = 1e5 + 1, M = 1e9 + 7, B = 317;
 
 int n;// n -> number of nodes
 vector<vector<int>> adj;//the tree
 
-struct BIT {
-    vector<int> bit;
+struct sg {
+    vector<int> seg, lazy;
+    int sz;
 
-    BIT(int size) {
-        bit = vector<int>(size + 2);
+    sg() {}
+
+    sg(int size) {
+        sz = 1;
+        while (sz < size) sz <<= 1;
+        seg = lazy = vector<int>(sz << 1);
     }
 
-    void add(int i, int val) {
-        i++;
-        while (i < bit.size()) {
-            bit[i] += val, i += i & -i;
+    void propagate(int x, int lx, int rx) {
+        if (lx == rx) return;
+        if (lazy[x] != 0) {
+            lazy[2 * x + 1] += lazy[x];
+            lazy[2 * x + 2] += lazy[x];
+            seg[2 * x + 1] += lazy[x];
+            seg[2 * x + 2] += lazy[x];
         }
+        lazy[x] = 0;
     }
 
-    int sum(int l, int r) {
-        int res = 0;
-        r++;
-        while (r)res += bit[r], r -= r & -r;
-        while (l)res -= bit[l], l -= l & -l;
-        return res;
+    void update(int l, int r, int v, int x = 0, int lx = 0, int rx = -1) {
+        if (!~rx) rx = sz - 1;
+        propagate(x, lx, rx);
+        if (r < lx or rx < l) return;
+        if (l <= lx and rx <= r) {
+            seg[x] += v;
+            lazy[x] += v;
+            propagate(x, lx, rx);
+            return;
+        }
+        int md = lx + rx >> 1;
+        update(l, r, v, 2 * x + 1, lx, md);
+        update(l, r, v, 2 * x + 2, md + 1, rx);
+        seg[x] = max(seg[2 * x + 1], seg[2 * x + 2]);
+    }
+
+    int query(int l, int r, int x = 0, int lx = 0, int rx = -1) {
+        if (!~rx) rx = sz - 1;
+        propagate(x, lx, rx);
+        if (r < lx or rx < l) return -1e15;
+        if (l <= lx and rx <= r) return seg[x];
+        int md = lx + rx >> 1;
+        return max(query(l, r, 2 * x + 1, lx, md), query(l, r, 2 * x + 2, md + 1, rx));
     }
 };
 
-int val[N];
-
 struct HLD {
-    vector<int> cid, cpos, tp, sz, depth, par;
-    vector<vector<int>> chains;
+    vector<int> tp, sz, depth, par, in;
+    int timer;
+    sg st;
 
     HLD(int root) {
-        cid = vector<int>(n + 1, -1);
-        cpos = tp = sz = depth = par = vector<int>(n + 1);
+        tp = sz = depth = par = in = vector<int>(n + 1);
+        timer = 0;
         dfs0(root, 0);
         dfs1(root, 0, root);
-        process();
+        st = sg(n + 1);
     }
 
     void dfs0(int u, int v) {
@@ -55,18 +80,9 @@ struct HLD {
     }
 
     void dfs1(int u, int v, int top) {
+        in[u] = timer++;
         int mx = -1, id = -1;
-
-        if (!~cid[top]) {
-            cid[top] = chains.size();
-            chains.emplace_back();
-        }
-
-        cpos[u] = chains[cid[top]].size();
-        chains[cid[top]].emplace_back(u);
-        cid[u] = cid[top];
         tp[u] = top;
-
         for (auto i: adj[u]) {
             if (i == v) continue;
             if (sz[i] > mx) mx = sz[i], id = i;
@@ -98,46 +114,28 @@ struct HLD {
     //sum/Xor-> if update -> bit : else -> prefix
     //gcd/median/>=k/& : if update -> segtree : else -> sparse table
 
-    //process the chains first
-    vector<BIT> st;
-
-    void process() {
-        for (int i = 0; i < chains.size(); ++i) {
-            st.emplace_back(BIT(chains[i].size()));
-            for (int j = 0; j < chains[i].size(); ++j) {
-                st.back().add(j, val[chains[i][j]]);
-            }
-        }
-    }
-
     int query(int u, int v) {
-        int ret{};
+        int ret = LLONG_MIN;
         while (tp[u] != tp[v]) {
             if (depth[tp[u]] < depth[tp[v]]) swap(u, v);
-            ret += st[cid[u]].sum(0, cpos[u]);
+            ret = max(ret, st.query(in[tp[u]], in[u]));
             u = par[tp[u]];
         }
 
-        if (depth[u] > depth[v]) swap(u, v);
-        ret += st[cid[u]].sum(cpos[u], cpos[v]);
+        if (in[u] > in[v]) swap(u, v);
+        ret = max(ret, st.query(in[u], in[v]));
         return ret;
     }
 
-    void update(int i, int x) {
-        st[cid[i]].add(cpos[i], -val[i]);
-        val[i] = x;
-        st[cid[i]].add(cpos[i], val[i]);
+    void updatesub(int i, int v) {
+        st.update(in[i], in[i] + sz[i] - 1, v);
     }
 };
 
 int q;
 
 void dowork() {
-    cin >> n >> q;
-    for (int i = 1; i <= n; ++i) {
-        cin >> val[i];
-    }
-
+    cin >> n;
     adj = vector<vector<int>>(n + 1);
     for (int i = 0, u, v; i < n - 1; ++i) {
         cin >> u >> v;
@@ -146,18 +144,15 @@ void dowork() {
     }
 
     HLD hld = HLD(1);
-
+    cin >> q;
     while (q--) {
-        int ty;
-        cin >> ty;
-        if (ty == 1) {
-            int i, x;
-            cin >> i >> x;
-            hld.update(i, x);
+        string ty;
+        int u, v;
+        cin >> ty >> u >> v;
+        if (ty[0] == 'a') {
+            hld.updatesub(u, v);
         } else {
-            int u;
-            cin >> u;
-            cout << hld.query(u, 1) << '\n';
+            cout << hld.query(u, v) << '\n';
         }
     }
 }
