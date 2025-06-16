@@ -13,3 +13,9 @@ vector<int> calc(string& s)
     }
     return pre_hash;
 }
+
+int get_hash(int l, int r, const vector<int>& pre_hash)
+{
+    int ret = ((pre_hash[r] - (l ? pre_hash[l - 1] : 0) + MOD) * inv[l]) % MOD;
+    return ret;
+}
