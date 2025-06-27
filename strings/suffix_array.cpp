@@ -48,7 +48,7 @@ vector<int> sort_cyclic_shifts(string const& s)
     return p;
 }
 
-vector<int> suffix_array_construction(string s)
+vector<int> build(string s)
 {
     s += "$";
     vector<int> sorted_shifts = sort_cyclic_shifts(s);
