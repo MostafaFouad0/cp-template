@@ -20,7 +20,7 @@ void radix_sort(vector<pair<pair<int,int>,int>>& a)
             a_new[pos[i]] = it;
             pos[i]++;
         }
-        a = a_new;
+        a.swap(a_new);
     }
 
     {
@@ -41,7 +41,7 @@ void radix_sort(vector<pair<pair<int,int>,int>>& a)
             a_new[pos[i]] = it;
             pos[i]++;
         }
-        a = a_new;
+        a.swap(a_new);
     }
 }
 
