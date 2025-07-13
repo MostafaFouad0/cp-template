@@ -1,0 +1,37 @@
+1) Multiply two polynomials
+2) Raise a Polynomial to a power of n
+3) Multiply two big integers
+4) All pairs sums
+5) All subarrays sums
+6) All subsets sums
+7) Cyclic shift stuffs
+8) Counting & Probability
+9) String matching (Wild Cards & Hamming Distance)
+
+when we want a limit on the size of the array end to the fft a variable called limit and return the array of size <=limit
+
+if there is a a^-x shift all the powers by the maximum value and at output shift by all the shifts 
+
+when multiplying many polynomials each time multiply the two polyniamls with the least size 
+
+take or leave (1 + x^a0) (1 + x^a1) (1 + x^a2).... if (1+ x^an)^m then that means i can take it many times  and we can change the leave or take coffecints depending of the number of ways to take or leave  
+
+when using ntt sometimes we have to use many different mods
+
+cyclic shifts :  make the the second polynimal x^-idx
+right shift : a:1 2 3 b : 1 2 3
+
+first poly :  0 0 0 1 2 3
+second poly : 1 2 3 1 2 3
+make the second poly x^-idx
+
+
+when calculating different subarray sums dont forget to intialise v1[0]=1,v2[mx]=1,freq[0]=1;
+
+dont forget to start from -mx when we want negative sums
+
+
+counting and probability : find the final formula and check how each value will contribute 
+
+remember the lightsaber problem : https://codeforces.com/contest/958/problem/F3 
+you can take every coeff under mod if nothing overflows
