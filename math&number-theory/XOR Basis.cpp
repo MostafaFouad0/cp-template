@@ -1,4 +1,4 @@
-// how many ways to construct x using xors = 2^(n-k), n is size of th vector space and k is the size of the basis
+// how many ways to construct x using xors = 2^(n-k), n is size of the vector space and k is the size of the basis
 /* you have to at most iterate over the size of the size of the basis to check if there is an xor that equals zero 
     ex if B = 30 then you have to iterate at most 30
 */
