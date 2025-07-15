@@ -37,3 +37,30 @@ struct Basis {
         return ans;
     }
 };
+
+/* memory effient way
+struct Basis {
+    vector<int>b;
+    int sz;
+    Basis(){
+        sz=0;
+    }
+    void insert(int x){
+        for(auto y:b){
+            x=min(x,x^y);
+        }
+        if(x){
+            sz++;
+            b.push_back(x);
+        }
+    }
+    bool can(int x)
+    {
+        for(auto y:b){
+            x=min(x,x^y);
+        }
+        return x==0;
+    }
+ 
+};
+*/
