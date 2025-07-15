@@ -1,3 +1,6 @@
+//to get max of (m*x + y) 
+// if you want min - > add(-m,-y) and when querying the result is -query(x)
+
 struct Line {
     mutable int k, m, p;
     bool operator<(const Line &o) const { return k < o.k; }
