@@ -2,7 +2,7 @@
 /* you have to at most iterate over the size of the size of the basis to check if there is an xor that equals zero 
     ex if B = 30 then you have to iterate at most 30
 */
-
+// when asked about choosing between ai or bi take x = the xor sum of a and insert ai^bi to the basis
 const int B = 63;
 struct Basis {
     int sz = 0;
