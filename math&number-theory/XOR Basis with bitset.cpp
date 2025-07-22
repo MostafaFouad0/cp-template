@@ -5,12 +5,8 @@ struct Basis {
 
     Basis() : b(vector<bitset<B>>(B)) {}
 
-    bool all_zeros(bitset<B> &x) {
-        bool f = 1;
-        for (int i = 0; i < x.size(); i++)
-            if (x[i])f = 0;
-
-        return f;
+      bool all_zeros(bitset<B> &x) {
+        return x.none();
     }
 
     void insert(bitset<B> x) {
