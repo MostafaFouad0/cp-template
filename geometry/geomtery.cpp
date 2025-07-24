@@ -191,7 +191,7 @@ double segPoint(point a, point b, point p) {
         if (l.cmpProj(a,p) && l.cmpProj(p,b))
             return l.dist(p);
     }
-    return min(abs(p-a), abs(p-b));
+    return min(length(p-a), length(p-b));
 }
 
 double segSeg(point a, point b, point c, point d) {
