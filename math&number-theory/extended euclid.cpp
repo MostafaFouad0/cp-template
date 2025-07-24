@@ -1,6 +1,6 @@
 //ax + by = gcd(a,b),d = gcd(a,b). compute x and y
 // there are infinte number of solutions, to get them x = x0 + b/d*k, y= y0 - a/d*k
-// ax + by = c is solvable iff c % d == 0
+// ax + by = c is solvable iff c % d == 0, get x and y and multiply them by c/d
 int extended_euclid(int  a, int  b, int &x, int &y) {
     if (b == 0) {
         x = 1;
