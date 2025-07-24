@@ -1,4 +1,5 @@
-//ax + by = gcd(a,b), compute x and y
+//ax + by = gcd(a,b),d = gcd(a,b). compute x and y
+// there are infinte number of solutions, to get them x = x0 + b/d*k, y= y0 - a/d*k
 int extended_euclid(int  a, int  b, int &x, int &y) {
     if (b == 0) {
         x = 1;
