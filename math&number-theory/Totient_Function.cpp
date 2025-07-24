@@ -10,3 +10,12 @@ void totient() {
         }
     }
 };
+
+// phi(N!) = (N is prime ? N-1 : N ) * phi( (N-1)!)
+ll phi_factn(int n) {
+
+    ll ret = 1;
+    for (int i = 2; i <= n; ++i)
+        ret = ret * (isprime(i) ? i - 1 : i);
+    return ret;
+}
