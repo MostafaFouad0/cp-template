@@ -5,8 +5,7 @@ n / (k + 1) ll floor_sum(ll n) {
   for (ll i = 1, last; i <= n; i = last + 1) {
     last = n / (n / i);
     sum += (n / i) * (last - i + 1);
-    // n / x yields the same value for i <= x <=
-    last.
+    // n / x yields the same value for i <= x <=last.
   }
   return sum;
 }
