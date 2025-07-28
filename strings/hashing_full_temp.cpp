@@ -35,7 +35,7 @@ struct Hash {
   Hash(const string &s) { build(s); }
   void build(const string &s) {
     assert(B1);
-    32 n = s.size();
+    n = s.size();
     hash_prefix(s);
     hash_suffix(s);  /// we need this ?
   }
@@ -64,3 +64,10 @@ struct Hash {
     return ret;
   }
 };
+void build() {
+  pw1[0] = pw2[0] = 1;
+  for (int i = 1; i < N; ++i) {
+    pw1[i] = 1LL * pw1[i - 1] * B1 % MOD1;
+    pw2[i] = 1LL * pw2[i - 1] * B2 % MOD2;
+  }
+}
