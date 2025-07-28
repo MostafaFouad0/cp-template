@@ -1,17 +1,33 @@
-class MonotonicQueue {
+struct mono_queue
+{
+private:
+    queue<int> main_queue;
+    deque<int> min_queue;
+
 public:
-    deque<ll> data;
-
-    void push(ll x) {
-        while (!data.empty() && data.back() < x)
-            data.pop_back();
-        data.push_back(x);
+    void push(int x)
+    {
+        main_queue.push(x);
+        while (!min_queue.empty() && x <
+            min_queue.back())
+        {
+            min_queue.pop_back();
+        }
+        min_queue.push_back(x);
     }
 
-    ll max() { return data.front(); }
-
-    void pop(ll x) {
-        if (!data.empty() && data.front() == x)
-            data.pop_front();
+    int pop()
+    {
+        int n = main_queue.front();
+        if (n == min_queue.front())
+        {
+            min_queue.pop_front();
+        }
+        main_queue.pop();
+        return n;
     }
+
+    int get_min() { return min_queue.front(); }
+    int front() { return main_queue.front(); }
+    int size() { return main_queue.size(); }
 };
