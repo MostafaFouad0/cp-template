@@ -20,6 +20,9 @@ typedef complex<T> point;
 
 bool isPerp(point v, point w) {return dot(v,w) == 0;}
 
+int dcmp(double a,double b) {
+    return fabs(a - b) <= EPS ? 0 : a > b ? 1 : -1;
+}
 
 double fixAngle(long double angle) {
     return angle > 1 ? 1 : (angle < -1 ? -1 : angle);
