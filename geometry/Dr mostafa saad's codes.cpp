@@ -328,3 +328,112 @@ pair<vector<point>, vector<point> > polygonCut(vector<point> &p,
   return make_pair(left, right);
 }
 
+#define X real()
+#define Y imag()
+#define vec(a,b)                ((b)-(a))
+#define length(a)               (hypot((a).imag(), (a).real()))
+
+struct cmpX {
+  bool operator()(const point &a, const point &b) {
+    if (dcmp(a.X, b.X) != 0)
+      return dcmp(a.X, b.X) < 0;
+    return dcmp(a.Y, b.Y) < 0;
+  }
+};
+
+struct cmpY {
+  bool operator()(const point &a, const point &b) {
+    if (dcmp(a.Y, b.Y) != 0)
+      return dcmp(a.Y, b.Y) < 0;
+    return dcmp(a.X, b.X) < 0;
+  }
+};
+
+double closestPair1(vector<point> &eventPts) {
+  double d = OO;
+  multiset<point, cmpY> activeWindow;
+  sort(eventPts.begin(), eventPts.end(), cmpX());
+
+  int left = 0;
+  for (int right = 0; right < (int) eventPts.size(); ++right) {
+    while (left < right && eventPts[right].X - eventPts[left].X > d)
+      activeWindow.erase(activeWindow.find(eventPts[left++]));
+    auto asIt = activeWindow.lower_bound(point(-OO, eventPts[right].Y - d));
+    auto aeIt = activeWindow.upper_bound(point(-OO, eventPts[right].Y + d));
+    for (; asIt != aeIt; asIt++)
+      d = min(d, length(eventPts[right] - *asIt));
+    activeWindow.insert(eventPts[right]);
+  }
+  return d;
+}
+
+int main1() {
+#ifndef ONLINE_JUDGE
+  freopen("test.txt", "rt", stdin);
+#endif
+
+  int n;
+  while (cin >> n && n) {
+    vector<point> eventPts(n);
+
+    for (int i = 0; i < n; ++i) {
+      double x, y;
+      cin >> x >> y;
+      eventPts[i] = point(x, y);
+    }
+
+    double d = closestPair1(eventPts);
+  }
+  return 0;
+}
+
+
+
+
+#define foreach(a,s) for(auto a=(s).begin();a!=(s).end();a++)
+
+double closestPair2(map<double, multiset<double> > & pointsMap) {
+  double d = OO;
+  foreach(xsIt, pointsMap) foreach(ymIt, xsIt->second) // sweep on each point p
+    {
+      double x = xsIt->first, y = *ymIt;
+      // Iterate on rectangle dx2d (max 6 points)
+      // iterate on active set - X dimension (distance d)
+      auto xeIt = pointsMap.upper_bound(x + d);
+      for (auto xIt = xsIt; xIt != xeIt; xIt++) {
+        double x2 = xIt->first;
+        // iterate on active set - Y dimension (distance 2d)
+        auto ysIt = xIt->second.lower_bound(y - d);
+        auto yeIt = xIt->second.upper_bound(y + d);
+        for (; ysIt != yeIt; ysIt++) {
+          if (xsIt != xIt|| ymIt != ysIt)  // if NOT original (x,y)
+            d = min(d, max( abs(x-x2), abs(y-*ysIt)));
+        }
+      }
+    }
+  return d;
+}
+
+bool isPointOnSegment(point a, point b, point c) {
+	double acb = length(a-b), ac = length(a-c), cb = length(b-c);
+	return dcmp(acb-(ac+cb), 0) == 0;
+}
+
+// Accurate and efficient
+int isInsidePoly(vector<point> p, point p0) {
+  int wn = 0;  // the winding number counter
+
+  for (int i = 0; i < sz(p); i++) {
+	point cur = p[i], nxt = p[(i + 1) % sz(p)];
+	if (isPointOnSegment(cur, nxt, p0))
+	  return true;
+	if (cur.Y <= p0.Y) {    // Upward edge
+	  if (nxt.Y > p0.Y && cp(nxt-cur, p0-cur) > EPS)
+		++wn;
+	} else {                // Downward edge
+	  if (nxt.Y <= p0.Y && cp(nxt-cur, p0-cur) < -EPS)
+		--wn;
+	}
+  }
+  return wn != 0;
+}
