@@ -1,83 +1,79 @@
-//N -> size of array
-ll base1 = 31, base2 = 37, pw1[N + 1], pw2[N + 1];
-pii pre[27][N + 1];
-void init() {
-    pw1[0] = pw2[0] = 1;
-    for (int i = 1; i < 27; ++i) {
-        pre[i][1].first = i;
-        pre[i][1].second = i;
-    }
-    for (int i = 1; i < N; i++) {
-        pw1[i] = (base1 * pw1[i - 1]) % M1;
-        pw2[i] = (base2 * pw2[i - 1]) % M2;
-        if (i > 1) {
-            for (int j = 1; j < 27; ++j) {
-                pre[j][i].first = (pre[j][i - 1].first * base1 + j) % M1;
-                pre[j][i].second = (pre[j][i - 1].second * base2 + j) % M2;
-            }
-        }
-    }
+﻿#include <bits/stdc++.h>
+
+#define Pc_champs ios_base::sync_with_stdio(false);cout.tie(NULL);cin.tie(NULL);
+using namespace std;
+
+#define ll long long
+#define int long long
+
+int const N = 1e5 + 1, LOG = 17, N2 = 3e5 + 5;
+int n, m;
+int const dx[] = {0, 0, -1, 1, -1, 1, -1, 1};
+int const dy[] = {1, -1, 0, 0, -1, 1, 1, -1};
+int dp[2][N], a[N];
+int frq[N];
+int current, lq, rq;
+
+void add(int i) {
+    i = a[i];
+    current += frq[i];
+    frq[i]++;
 }
 
-struct Tree {
-    vector<pii > seg;
-    vector<int> lazy;
+void erase(int i) {
+    i = a[i];
+    frq[i]--;
+    current -= frq[i];
+}
 
-    Tree() {
-        sz = 1;
-        while (sz < n) sz <<= 1;
-        seg = vector<pii >(sz << 1);
-        lazy = vector<int>(sz << 1, -1);
+void update(int l, int r) {
+    while (rq < r) add(++rq);
+    while (l < lq) add(--lq);
+    while (r < rq) erase(rq--);
+    while (lq < l) erase(lq++);
+}
+
+void solve(int lx, int rx, int l, int r, bool &sign) {
+    if (lx > rx) return;
+    int md = (lx + rx) >> 1;
+    int &ret = dp[sign][md];
+    ret = LLONG_MAX;
+    int best = -1;
+    for (int i = min(md, r); i >= l; --i) {
+        update(i, md);
+        if (ret > current + dp[sign ^ 1][i - 1]) ret = current + dp[sign ^ 1][i - 1], best = i;
+    }
+    solve(lx, md - 1, l, best, sign);
+    solve(md + 1, rx, best, r, sign);
+}
+
+void dowork() {
+    cin >> n >> m;
+    for (int i = 1; i <= n; ++i) {
+        cin >> a[i];
+        dp[0][i] = 1e12;
+    }
+    lq = 1, rq = 0;
+    bool sign{};
+    for (int i = 0; i < m; ++i) {
+        sign ^= 1;
+        solve(1 + i, n, 1 + i, n, sign);
     }
 
-    pii merge(pii l, pii r, int len) {
-        pii res = l;
-        res.F = res.F * pw1[len] % M1;
-        res.S = res.S * pw2[len] % M2;
-        res.F = (res.F + r.F) % M1;
-        res.S = (res.S + r.S) % M2;
-        return res;
-    }
+    cout << dp[sign][n];
+}
 
-    void apply(int x, int val, int len) {
-        seg[x].first = pre[val][len].first;
-        seg[x].second = pre[val][len].second;
-    }
 
-    void propagate(int x, int lx, int rx) {
-        if (lazy[x] == -1) return;
-        if (rx != lx) {
-            int mid = (lx + rx) >> 1;
-            apply(2 * x + 1, lazy[x], mid - lx + 1);
-            apply(2 * x + 2, lazy[x], rx - mid);
-            lazy[2 * x + 1] = lazy[x];
-            lazy[2 * x + 2] = lazy[x];
-        }
-        lazy[x] = -1;
+signed main() {
+    Pc_champs
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("output.txt", "w", stdout);
+#endif
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        dowork();
+        //cout << "\n";
     }
-
-    void update(int l, int r, int val, int x = 0, int lx = 0, int rx = sz - 1) {
-        propagate(x, lx, rx);
-        if (lx > r || l > rx) return;
-        if (lx >= l && rx <= r) {
-            apply(x, val, rx - lx + 1);
-            lazy[x] = val;
-            return;
-        }
-        int mid = (lx + rx) >> 1;
-        update(l, r, val, 2 * x + 1, lx, mid);
-        update(l, r, val, 2 * x + 2, mid + 1, rx);
-        seg[x] = merge(seg[2 * x + 1], seg[2 * x + 2], rx - mid);
-    }
-
-    piii query(int l, int r, int x = 0, int lx = 0, int rx = sz - 1) {
-        propagate(x, lx, rx);
-        if (l <= lx && rx <= r) return {seg[x], rx - lx + 1};
-        if (l > rx || r < lx) return {{0, 0}, 0};
-        int mid = (lx + rx) >> 1;
-        auto lft = query(l, r, 2 * x + 1, lx, mid);
-        auto rgt = query(l, r, 2 * x + 2, mid + 1, rx);
-        auto res = merge(lft.F, rgt.F, rgt.S);
-        return {res, lft.S + rgt.S};
-    }
-};
+}
