@@ -1,3 +1,6 @@
+//only need two things to know about
+//if a value will be added to segment : what the result if there was a value first in this node ? how to handle when it push down to there childs!
+
 struct Node {
     //
 };
