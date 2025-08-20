@@ -12,3 +12,9 @@ for (int i = 0; i < 20; ++i) {
         }
     }
 
+//subsequence there OR exactly == x
+for (int i = 0; i < n; ++i) {
+        for (int msk = 0; msk < (1 << n); ++msk) {
+            if (msk & (1 << i)) dp[msk] = (dp[msk] + M - dp[msk ^ (1 << i)]) % M;
+        }
+    }
