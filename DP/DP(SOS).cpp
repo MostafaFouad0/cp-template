@@ -22,3 +22,11 @@ for (int i = 0; i < n; ++i) {
 //number of elements that x&y != 0 
 //use method 2 and answer is -> (total - dp[msk^((1<<n)-1)])
 
+
+// to loop on the subsets of a mask 
+for(int i = mask; i > 0; i = (i-1) & mask){
+    	//gurantee that (mask|i==mask)
+}
+
+
+
