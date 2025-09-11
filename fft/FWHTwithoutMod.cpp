@@ -71,7 +71,7 @@ void ifwht_xor(vector<int> &a) {
     }
 }
 
-vector<int> conv_and(vector<int> &a, vector<int> &b) {
+vector<int> conv_xor(vector<int> &a, vector<int> &b) {
     int n = max(a.size(), b.size());
     int sz = 1;
     while (sz < n) sz <<= 1;
