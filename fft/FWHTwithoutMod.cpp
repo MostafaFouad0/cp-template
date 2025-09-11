@@ -62,7 +62,7 @@ void ifwht_xor(vector<int> &a) {
     int n = a.size();
     for (int s = 2, h = 1; s <= n; s <<= 1, h <<= 1) {
         for (int l = 0; l < n; l += s) {
-            for (int i = 0; i < min(i, n - l - h); ++i) {
+            for (int i = 0; i < h; ++i) {
                 int tmp = a[l + h + i];
                 a[l + h + i] = (a[l + i] - tmp) / 2;
                 a[l + i] = (a[l + i] + tmp) / 2;
