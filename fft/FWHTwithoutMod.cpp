@@ -77,7 +77,6 @@ vector<int> conv_and(vector<int> &a, vector<int> &b) {
     for (int i = 0; i < sz; ++i) A[i] *= B[i];
 
     ifwht_and(A);
-    for (int i = 0; i < sz; ++i) if (A[i] > 0) A[i] = 1;
     return A;
 }
 
