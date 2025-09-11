@@ -1,4 +1,5 @@
 using cd = complex<double>;
+const double PI = acos(-1);
 
 void fft(vector<cd> & a, bool invert) {
     int n = a.size();
