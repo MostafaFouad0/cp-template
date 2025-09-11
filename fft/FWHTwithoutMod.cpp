@@ -82,3 +82,18 @@ vector<int> conv_and(vector<int> &a, vector<int> &b) {
 
 //XOR
 
+
+
+
+vector<int> poly_pow(vector<int> &a, int p) {
+    vector<int> res;
+    while (p) {
+        if (p & 1) {
+            if (res.size()) res = conv_and(res, a);
+            else res = a;
+        }
+        a = conv_and(a, a);
+        p >>= 1;
+    }
+    return res;
+}
