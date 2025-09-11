@@ -1,6 +1,7 @@
 const int mod = 998244353;
 const int special_mod = 998244353, primitive_root = 3, lim = 64;
 
+//for n + m >= 2^23
 int mod_exp(int b, int e, ll m = mod) {
     int res = 1;
     for (; e; b = (ll) b * b % m, e /= 2) if (e & 1) res = (ll) res * b % m;
