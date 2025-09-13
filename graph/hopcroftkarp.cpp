@@ -59,3 +59,19 @@ struct HopcroftKarp {
         return ans;
     }
 };
+
+int n, m, k, idx;
+ 
+void dowork() {
+    cin >> n >> m >> k;
+    HopcroftKarp hk = HopcroftKarp(n, m);
+    for (int i = 0, u, v; i < k; ++i) {
+        cin >> u >> v;
+        hk.add_edge(u, v);
+    }
+ 
+    cout << hk.maximum_matching() << '\n';
+    for (int i = 1; i <= n; ++i) {
+        if (hk.l[i]) cout << i << ' ' << hk.l[i] - n << '\n';
+    }
+
