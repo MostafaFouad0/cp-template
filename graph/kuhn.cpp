@@ -1,3 +1,4 @@
+//this only applied for Bipartite graph (not for general)
 vector<set<int>> adj;
 vector<int> mt;
 vector<bool> used;
