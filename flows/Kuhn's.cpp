@@ -1,4 +1,3 @@
-//this only applied for Bipartite graph (not for general)
 // O(n*m)
 vector<set<int>> adj;
 vector<int> mt;
