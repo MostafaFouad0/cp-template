@@ -1,3 +1,4 @@
+//n vertex m edges
 // O( sqrt(n) * m )
 struct HopcroftKarp {
     static const int inf = 1e9;
