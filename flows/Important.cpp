@@ -4,7 +4,7 @@
 // +------------+---------------------------------------+------------------+
 // | Unweighted | - Max flow algorithms                 | - Edmond's       |
 // |   Edges    | - Repeated augmenting paths with DFS  |   blossom alg.   |
-// |            | - Hopcroft-Karp                       |                  |
+// |            | - Hopcroft-Karp / Kuhn's              |                  |
 // +------------+---------------------------------------+------------------+
 // | Weighted   | - Min cost max flow algorithms        | - DP solution    |
 // |   Edges    | - Hungarian algorithm (perfect match) |   for small      |
