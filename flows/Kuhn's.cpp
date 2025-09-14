@@ -1,6 +1,6 @@
 //n vertex m edges
 // O(n*m)
-vector<set<int>> adj;
+vector<vector<int>> adj;
 vector<int> mt;
 vector<bool> used;
 bool try_kuhn(int v) {
@@ -17,6 +17,9 @@ bool try_kuhn(int v) {
 int run() {
   int n = adj.size();
   mt.assign(n, -1);
+  for (int i = 0; i < n; ++i) {
+        random_shuffle(adj[i].begin(), adj[i].end());
+    }
   for (int v = 0; v < n; ++v) {
     used.assign(n, false);
     try_kuhn(v);
