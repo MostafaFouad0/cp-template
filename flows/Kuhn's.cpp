@@ -1,3 +1,4 @@
+//n vertex m edges
 // O(n*m)
 vector<set<int>> adj;
 vector<int> mt;
