@@ -10,5 +10,3 @@
 // |   Edges    | - Hungarian algorithm (perfect match) |   for small      |
 // |            | - LP network simplex                  |   graphs         |
 // +------------+---------------------------------------+------------------+
-
-//if the maximum flow between two sets -> Hopcroft .. otherwise -> Kuhn's
