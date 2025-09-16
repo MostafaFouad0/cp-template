@@ -10,3 +10,5 @@ Common matching variations
 |   Edges    | - Hungarian algorithm (perfect match) |   for small      |
 |            | - LP network simplex                  |   graphs         |
 +------------+---------------------------------------+------------------+
+
+given a set1 one and set2 and each edge have wieght .. use hungarian
