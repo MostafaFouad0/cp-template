@@ -1,4 +1,4 @@
-//O(maxflow * edges)
+//O(log(cap) * edges^2)
 int const N = 1e5 + 1, M = 2e5 + 1;
 //Be carful : N-> nodes M-> is the number of edges*2
 
@@ -27,16 +27,16 @@ void addAugEdge(int u, int v, int fc, int bc = 0) {//f-> from t-> to c-> cap
 int vis[N], vid;
 int src, snk;
 
-int dfs(int u, int f = INT_MAX) {
+int dfs(int u, int f) {
     if (vis[u] == vid) return 0;
-    if (u == snk or !f) return f;
+    if (u == snk) return 1;
     vis[u] = vid;
     edges(u, v, e, c) {
-        int df = dfs(v, min(f, c));
-        if (df > 0) {
-            cap[e] -= df;
-            cap[e ^ 1] += df;
-            return df;
+        if (c < f) continue;
+        if (dfs(v, min(f, c))) {
+            cap[e] -= f;
+            cap[e ^ 1] += f;
+            return 1;
         }
     }
     return 0;
@@ -44,7 +44,9 @@ int dfs(int u, int f = INT_MAX) {
 
 int maxflow() {
     int flow{};
-    for (int f; ++vid, f = dfs(src); flow += f);
+    for (int f = 1 << 30; ++vid, f; f >>= 1)
+        while (++vid, dfs(src, f))
+            flow += f;
     return flow;
 }
 
