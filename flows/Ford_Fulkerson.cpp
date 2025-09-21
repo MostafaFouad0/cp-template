@@ -1,3 +1,4 @@
+//O(maxflow * edges)
 int const N = 1e5 + 1, M = 2e5 + 1;
 //Be carful : N-> nodes M-> is the number of edges*2
 
