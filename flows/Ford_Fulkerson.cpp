@@ -1,10 +1,8 @@
-//O(maxflow*edges)
-
 int const N = 1e5 + 1, M = 2e5 + 1;
 //Be carful : N-> nodes M-> is the number of edges*2
 
 int head[N], to[M], nxt[M], cap[M], ne;
-int n, q, idx;
+int n, m, idx;
 
 void init() {
     ne = 0;
@@ -29,7 +27,8 @@ int vis[N], vid;
 int src, snk;
 
 int dfs(int u, int f = INT_MAX) {
-    if (u == snk or !f or vis[u] == vid) return f;
+    if (vis[u] == vid) return 0;
+    if (u == snk or !f) return f;
     vis[u] = vid;
     edges(u, v, e, c) {
         int df = dfs(v, min(f, c));
@@ -46,4 +45,17 @@ int maxflow() {
     int flow{};
     for (int f; ++vid, f = dfs(src); flow += f);
     return flow;
+}
+
+signed main() {
+    cin>>n>>m;//n edges - m nodes
+    init();
+    while (n--) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        addAugEdge(a, b, c);
+    }
+
+    src = 1, snk = m;
+    cout << maxflow();
 }
