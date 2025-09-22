@@ -1,89 +1,86 @@
 //O(sqrt(n)*m))
-int const N = 1e5 + 1, M = 2e5 + 1;
-//Be carful : N-> nodes M-> is the number of edges*2
-int head[N], work[N], to[M], nxt[M], cap[M], ne = 0, n, m, idx;
+#define ll long long
 
-void init() {
-    ne = 0;
-    memset(head, -1, n * sizeof head[0]);
-}
+struct FlowEdge {
+  int from, to;
+  ll cap, flow = 0;
 
-void addEdge(int f, int t, int c) {
-    to[ne] = t;
-    cap[ne] = c;
-    nxt[ne] = head[f];
-    head[f] = ne++;
-}
+  FlowEdge(int from, int to, ll cap) : from(from), to(to), cap(cap) {}
+};
 
-void addAugEdge(int u, int v, int fc, int bc = 0) {
-    addEdge(u, v, fc);
-    addEdge(v, u, bc);
-}
 
-#define edges(u, v, e, c)  for(int e=head[u],c,v;~e && (c=cap[e],v=to[e],1);e=nxt[e])
+struct Dinic {
+  const ll flow_inf = 1e18;
+  vector<FlowEdge> edges;
+  vector<vector<int>> adj;
+  int n, m = 0;
+  int s, t;
+  vector<int> level, ptr;
+  queue<int> q;
 
-int vis[N], vid;
-int src, snk;
+  Dinic(int n, int s, int t) : n(n), s(s), t(t) {
+    adj.resize(n);
+    level.resize(n);
+    ptr.resize(n);
+  }
 
-int dist[N];
+  void add_edge(int from, int to, ll cap) {
+    edges.emplace_back(from, to, cap);
+    edges.emplace_back(to, from, 0);
+    adj[from].push_back(m);
+    adj[to].push_back(m + 1);
+    m += 2;
+  }
 
-bool bfs() {
-    vis[src] = ++vid;
-    dist[src] = 0;
-    queue<int> q;
-    q.push(src);
-    while (q.size()) {
-        int u = q.front();
-        q.pop();
-        edges(u, v, e, c)
-            if (c && vis[v] != vid) {
-                vis[v] = vid;
-                dist[v] = dist[u] + 1;
-                if (v == snk)
-                    return 1;
-                q.push(v);
-            }
+  bool bfs() {
+    while (!q.empty()) {
+      int v = q.front();
+      q.pop();
+      for (int id: adj[v]) {
+        if (edges[id].cap - edges[id].flow < 1)
+          continue;
+        if (level[edges[id].to] != -1)
+          continue;
+        level[edges[id].to] = level[v] + 1;
+        q.push(edges[id].to);
+      }
+    }
+    return level[t] != -1;
+  }
+
+  ll dfs(int v, ll pushed) {
+    if (pushed == 0)
+      return 0;
+    if (v == t)
+      return pushed;
+    for (int &cid = ptr[v]; cid < (int) adj[v].size(); cid++) {
+      int id = adj[v][cid];
+      int u = edges[id].to;
+      if (level[v] + 1 != level[u] || edges[id].cap - edges[id].flow < 1)
+        continue;
+      ll tr = dfs(u, min(pushed, edges[id].cap - edges[id].flow));
+      if (tr == 0)
+        continue;
+      edges[id].flow += tr;
+      edges[id ^ 1].flow -= tr;
+      return tr;
     }
     return 0;
-}
+  }
 
-
-int dfs(int u, int f = INT_MAX) {
-    if (vis[u] == vid) return 0;
-    if (u == snk or !f)
-        return f;
-    vis[u] = vid;
-    for (int &e = work[u], c, v; ~e && (c = cap[e], v = to[e], 1); e = nxt[e]) {
-        if (dist[u] + 1 != dist[v])continue;
-        int df;
-        if (df = dfs(v, min(f, c))) {
-            cap[e] -= df;
-            cap[e ^ 1] += df;
-            return df;
-        }
+  ll flow() {
+    ll f = 0;
+    while (true) {
+      fill(level.begin(), level.end(), -1);
+      level[s] = 0;
+      q.push(s);
+      if (!bfs())
+        break;
+      fill(ptr.begin(), ptr.end(), 0);
+      while (ll pushed = dfs(s, flow_inf)) {
+        f += pushed;
+      }
     }
-    return 0;
-}
-
-int maxflow() {
-    int flow = 0;
-    while (bfs()) {
-        memcpy(work, head, n * sizeof head[0]);
-        for (int f; ++vid, f = dfs(src); flow += f);
-    }
-    return flow;
-}
-
-void dowork() {
-    cin >> n >> m;
-    init();
-    while (m--) {
-        int a, b, c;
-        cin >> a >> b >> c;
-        --a, --b;
-        addAugEdge(a, b, c, c);
-    }
-
-    src = 0, snk = n - 1;
-    cout << maxflow();
-}
+    return f;
+  }
+};
