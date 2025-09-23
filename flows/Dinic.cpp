@@ -25,12 +25,12 @@ struct Dinic {
     ptr.resize(n);
   }
 
-  void add_edge(int from, int to, ll cap) {
-    edges.emplace_back(from, to, cap);
-    edges.emplace_back(to, from, 0);
-    adj[from].push_back(m);
-    adj[to].push_back(m + 1);
-    m += 2;
+  void add_edge(int from, int to, ll fc, int bc = 0) {
+        edges.emplace_back(from, to, fc);
+        edges.emplace_back(to, from, bc);
+        adj[from].push_back(m);
+        adj[to].push_back(m + 1);
+        m += 2;
   }
 
   bool bfs() {
