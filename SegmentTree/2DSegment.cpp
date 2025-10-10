@@ -10,79 +10,49 @@ int const N = 1e5 + 1, M = 2e5 + 1;
 vector<vector<int>> grid;
 
 struct seg2d {
-    vector<vector<int>> sg;
-    int szx, szy;
+    int n, m;
+    vector<vector<int>> seg;
 
-    seg2d(int n, int m) {
-        szx = szy = 1;
-        while (szx < n) szx <<= 1;
-        while (szy < m) szy <<= 1;
-        sg = vector<vector<int>>(szx << 1, vector<int>(szy << 1));
+    int merge(int a, int b) const {
+        return a + b;
     }
 
-    void buildy(int &x, int &lx, int &rx, int y = 0, int ly = 0, int ry = -1) {
-        if (!~ry) ry = szy - 1;
-        if (ly == ry) {
-            if (lx == rx) {
-                if (ly < grid[0].size() and lx < grid.size()) sg[x][y] = grid[lx][ly];
-            } else {
-                sg[x][y] = sg[2 * x + 1][y] + sg[2 * x + 2][y];
+    seg2d(int n, int m) : n(n), m(m) {
+        seg = vector<vector<int>>(2 * n,
+                                  vector<int>(2 * m, 0));
+    }
+
+    int qry(int x1, int y1, int x2, int y2) const {
+        int ret = 0;
+        int y3 = y1 + m, y4 = y2 + m;
+        for (x1 += n, x2 += n; x1 <= x2; ++x1 /= 2,
+                --x2 /= 2) {
+            for (y1 = y3, y2 = y4; y1 <= y2; ++y1 /= 2,
+                    --y2 /= 2) {
+                if ((x1 & 1) and (y1 & 1))
+                    ret = merge(ret, seg[x1][y1]);
+                if ((x1 & 1) and !(y2 & 1))
+                    ret = merge(ret, seg[x1][y2]);
+                if (!(x2 & 1) and (y1 & 1))
+                    ret = merge(ret, seg[x2][y1]);
+                if (!(x2 & 1) and !(y2 & 1))
+                    ret = merge(ret, seg[x2][y2]);
             }
-            return;
         }
-        int md = ly + ry >> 1;
-        buildy(x, lx, rx, 2 * y + 1, ly, md);
-        buildy(x, lx, rx, 2 * y + 2, md + 1, ry);
-        sg[x][y] = sg[x][2 * y + 1] + sg[x][2 * y + 2];
+        return ret;
     }
 
-    void buildx(int x = 0, int lx = 0, int rx = -1) {
-        if (!~rx) rx = szx - 1;
-        if (lx != rx) {
-            int md = lx + rx >> 1;
-            buildx(2 * x + 1, lx, md);
-            buildx(2 * x + 2, md + 1, rx);
+    void upd(int x, int y, int val) {
+        int y2 = y += m;
+        for (x += n; x; x /= 2, y = y2) {
+            if (x >= n) seg[x][y] = val;
+            else
+                seg[x][y] = merge(
+                        seg[2 * x][y], seg[2 * x + 1][y]);
+            while (y /= 2)
+                seg[x][y] = merge(seg[x][2 * y],
+                                  seg[x][2 * y + 1]);
         }
-        buildy(x, lx, rx);
-    }
-
-    int sumy(int l, int r, int &x, int y = 0, int ly = 0, int ry = -1) {
-        if (!~ry) ry = szy - 1;
-        if (r < ly or ry < l) return 0;
-        if (l <= ly and ry <= r) return sg[x][y];
-        int md = ly + ry >> 1;
-        return sumy(l, r, x, 2 * y + 1, ly, md) + sumy(l, r, x, 2 * y + 2, md + 1, ry);
-    }
-
-    int sumx(int lx, int rx, int ly, int ry, int x = 0, int l = 0, int r = -1) {
-        if (!~r) r = szx - 1;
-        if (rx < l or r < lx) return 0;
-        if (lx <= l and r <= rx) return sumy(ly, ry, x);
-        int md = l + r >> 1;
-        return sumx(lx, rx, ly, ry, 2 * x + 1, l, md) + sumx(lx, rx, ly, ry, 2 * x + 2, md + 1, r);
-    }
-
-    void updatey(int posx, int posy, int val, int &x, int &lx, int &rx, int y = 0, int ly = 0, int ry = -1) {
-        if (!~ry) ry = szy - 1;
-        if (ly == ry) {
-            if (lx == rx) sg[x][y] = val;
-            else sg[x][y] = sg[2 * x + 1][y] + sg[2 * x + 2][y];
-            return;
-        }
-        int md = ly + ry >> 1;
-        if (posy <= md) updatey(posx, posy, val, x, lx, rx, 2 * y + 1, ly, md);
-        else updatey(posx, posy, val, x, lx, rx, 2 * y + 2, md + 1, ry);
-        sg[x][y] = sg[x][2 * y + 1] + sg[x][2 * y + 2];
-    }
-
-    void updatex(int posx, int posy, int val, int x = 0, int lx = 0, int rx = -1) {
-        if (!~rx) rx = szx - 1;
-        if (lx != rx) {
-            int md = lx + rx >> 1;
-            if (posx <= md) updatex(posx, posy, val, 2 * x + 1, lx, md);
-            else updatex(posx, posy, val, 2 * x + 2, md + 1, rx);
-        }
-        updatey(posx, posy, val, x, lx, rx);
     }
 };
 
@@ -97,10 +67,10 @@ void dowork() {
             char x;
             cin >> x;
             grid[i][j] = (x == '*');
+            sg.upd(i, j, (x == '*'));
         }
     }
 
-    sg.buildx();
     while (q--) {
         int ty;
         cin >> ty;
@@ -108,13 +78,28 @@ void dowork() {
             int x, y;
             cin >> x >> y;
             --y, --x;
-            sg.updatex(x, y, grid[x][y] ^ 1);
             grid[x][y] ^= 1;
+            sg.upd(x, y, grid[x][y]);
         } else {
             int ly, lx, ry, rx;
             cin >> lx >> ly >> rx >> ry;
             --ly, --lx, --ry, --rx;
-            cout << sg.sumx(lx, rx, ly, ry) << '\n';
+            cout << sg.qry(lx, ly, rx, ry) << '\n';
         }
+    }
+}
+
+signed main() {
+    Pc_champs
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    freopen("output.txt", "w", stdout);
+#endif
+    int t = 1;
+    //cin >> t;
+    while (t--) {
+        ++idx;
+        dowork();
+        cout << '\n';
     }
 }
