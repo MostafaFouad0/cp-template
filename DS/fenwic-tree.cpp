@@ -1,5 +1,4 @@
 class BIT {
-public:
     vector<int> bit;
     int size;
 
