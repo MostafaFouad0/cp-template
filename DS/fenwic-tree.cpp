@@ -1,4 +1,4 @@
-class BIT {
+struct BIT {
     vector<int> bit;
     int size;
 
