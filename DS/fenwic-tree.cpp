@@ -29,4 +29,16 @@ struct BIT {
             }
         return pos + 1;
     }
+
+    //for the update range : (need two bit) 
+     void add(int l, int r, int x) {
+        add(bit, l, x);
+        add(bit, r, -x);
+        add(bit2, l, x * (l - 1));
+        add(bit2, r, -x * r);
+    }
+
+    int sum(int l, int r) {
+        return (sum(bit, r) * r - sum(bit2, r)) - (sum(bit, l - 1) * (l - 1) - sum(bit2, l - 1));
+    }
 };
