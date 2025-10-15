@@ -21,11 +21,11 @@ int get_centroid(int u, int sz, int v = -1) {
 
 void build_centroid(int u) {
     int centroid = get_centroid(u, get_size(u));
+    removed[centroid] = true;
     for (auto i: adj[centroid]) {
         if (removed[i]) continue;
         //the function will be here.
     }
-    removed[centroid] = true;
     for (auto i: adj[centroid]) {
         if (removed[i]) continue;
         build_centroid(i);
