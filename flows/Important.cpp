@@ -12,3 +12,5 @@ Common matching variations
 +------------+---------------------------------------+------------------+
 
 given a set1 one and set2 and each edge have wieght .. use hungarian
+
+//if you need the smallest lexicographically permutation -> Kuhn
