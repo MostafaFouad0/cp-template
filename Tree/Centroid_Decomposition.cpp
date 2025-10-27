@@ -14,7 +14,7 @@ int get_size(int u, int v = -1) {
 int get_centroid(int u, int sz, int v = -1) {
     for (auto i: adj[u]) {
         if (i == v or removed[i]) continue;
-        if (sub[i] * 2 > sz) get_centroid(i, sz, u);
+        if (sub[i] * 2 > sz) return get_centroid(i, sz, u);
     }
     return u;
 }
