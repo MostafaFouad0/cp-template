@@ -1,66 +1,78 @@
 std::mt19937_64 rnd(std::chrono::system_clock::now().time_since_epoch().count());
-struct Treap{
-    struct Node{
-        int key=0,val=0,pri=rnd(),sz=1;
-        array<Node*,2>c={0,0};
-        Node(){}
-        Node(int k,int x=0){
-            key=k;
-            val=x;
-        }
-    };
-    Node*root=0;
-    int getSize(Node*t)
-    {
-        return t?t->sz:0;
-    }
-    Treap(int n)
-    {
-        for(int i=1;i<=n;i++)
-        {
-            root=merge(root,new Node(i));
-        }
-    }
-    Node*fix(Node*t)
-    {
-        t->sz=getSize(t->c[0])+getSize(t->c[1])+1;
-        return t;
-    }
-    array<Node*,2>split(Node*t,int k)
-    {
-        if(!t) return {0,0};
-        if(getSize(t->c[0])>=k)
-        {
-            auto ret=split(t->c[0],k);
-            t->c[0]=ret[1];
-            return {ret[0],fix(t)};
-        }
-        else
-        {
-            auto ret=split(t->c[1],k-getSize(t->c[0])-1);
-            t->c[1]=ret[0];
-            return {fix(t),ret[1]};
-        }
-    }
-    Node*merge(Node*u,Node*v)
-    {
-        if(!u||!v) return u?u:v;
-        if(u->pri>v->pri)
-        {
-            u->c[1]=merge(u->c[1],v);
-            return fix(u);
-        }
-        else
-        {
-            v->c[0]=merge(u,v->c[0]);
-            return fix(v);
-        }
-    }
-    void print(Node*t)
-    {
-        if(!t) return;
-        print(t->c[0]);
-        cout<<t->key<<' ';
-        print(t->c[1]);
-    }
+
+struct item {
+    int key, prior, cnt{};
+    item *l, *r;
+
+    item() {}
+
+    item(int key) : key(key), cnt(1), prior(rand()), l(NULL), r(NULL) {}
 };
+
+typedef item *pitem;
+
+void split(pitem t, int key, pitem &l, pitem &r) {
+    if (!t)
+        l = r = NULL;
+    else if (t->key <= key)
+        split(t->r, key, t->r, r), l = t;
+    else
+        split(t->l, key, l, t->l), r = t;
+    if (l) l->cnt = (l->l ? l->l->cnt : 0) + (l->r ? l->r->cnt : 0) + 1;
+    if (r) r->cnt = (r->l ? r->l->cnt : 0) + (r->r ? r->r->cnt : 0) + 1;
+}
+
+void insert(pitem &t, pitem it) {
+    if (!t)
+        t = it;
+    else if (it->prior > t->prior)
+        split(t, it->key, it->l, it->r), t = it;
+    else
+        insert(t->key <= it->key ? t->r : t->l, it);
+    if (t) t->cnt = (t->l ? t->l->cnt : 0) + (t->r ? t->r->cnt : 0) + 1;
+}
+
+void merge(pitem &t, pitem l, pitem r) {
+    if (!l || !r)
+        t = l ? l : r;
+    else if (l->prior > r->prior)
+        merge(l->r, l->r, r), t = l;
+    else
+        merge(r->l, l, r->l), t = r;
+    if (t) t->cnt = (t->l ? t->l->cnt : 0) + (t->r ? t->r->cnt : 0) + 1;
+}
+
+void erase(pitem &t, int key) {
+    if (t->key == key) {
+        pitem th = t;
+        merge(t, t->l, t->r);
+        delete th;
+    } else {
+        erase(key < t->key ? t->l : t->r, key);
+    }
+    if (t) t->cnt = (t->l ? t->l->cnt : 0) + (t->r ? t->r->cnt : 0) + 1;
+}
+
+bool find(pitem t, int x) {
+    if (!t) return false;
+    if (t->key == x) return true;
+    if (t->key < x) return find(t->r, x);
+    return find(t->l, x);
+}
+
+int smallerorequal(pitem it, int x) {
+    pitem l = NULL, r = NULL;
+    split(it, x, l, r);
+    int ret = (l ? l->cnt : 0);
+    merge(it, l, r);
+    return ret;
+}
+
+int kth(pitem it, int i) {
+    int l = 1, r = (int) 1e9, md, ans = 0;
+    while (l <= r) {
+        md = l + r >> 1;
+        (smallerorequal(it, md) < i ? ans = md, l = md + 1 : r = md - 1);
+    }
+    return ans + 1;
+}
