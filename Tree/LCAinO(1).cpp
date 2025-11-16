@@ -1,18 +1,18 @@
-vector<int> tree[N];
-int depth[2 * N], euler[2 * N], first[N];
-int st[LOG][2 * N];
+vector<vector<int>> adj, st;
+vector<int> depth, euler, in;
 int timer = 0;
+//depth and euler will be 2*n memory and in is n
+//also st(log, 2*n)
 
-void dfs(int node, int par, int d) {
-    first[node] = timer;
-    euler[timer] = node;
+void dfs(int u, int v, int d) {
+    in[u] = timer;
+    euler[timer] = u;
     depth[timer++] = d;
-    for (int child : tree[node]) {
-        if (child != par) {
-            dfs(child, node, d + 1);
-            euler[timer] = node;
-            depth[timer++] = d;
-        }
+    for (int i: adj[u]) {
+        if (i == v) continue;
+        dfs(i, u, d + 1);
+        euler[timer] = u;
+        depth[timer++] = d;
     }
 }
 
@@ -28,8 +28,8 @@ void build_sparse(int n) {
     }
 }
 
-int get_lca(int u, int v) {
-    int l = first[u], r = first[v];
+int lca(int u, int v) {
+    int l = in[u], r = in[v];
     if (l > r) swap(l, r);
     int len = r - l + 1;
     int k = __lg(len);
