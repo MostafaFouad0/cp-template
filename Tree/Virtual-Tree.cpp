@@ -39,11 +39,6 @@ int lca(int u, int v) {
     int y = st[k][r - (1 << k) + 1];
     return depth[x] < depth[y] ? euler[x] : euler[y];
 }
-
-int dis(int u, int v) {
-    return depth[in[u]] - depth[in[v]];
-}
-
 vector<vector<int>> adj2;
 
 bool is_ancestor(int u, int v) {
