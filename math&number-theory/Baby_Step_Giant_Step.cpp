@@ -1,6 +1,7 @@
 // Returns minimum x for which a ^ x % m = b % m.
 //for any a,b,m
 //if a can be zero, handle it
+//O(sqrt(m))
 int solve(int a, int b, int m) {
     a %= m, b %= m;
     int k = 1, add = 0, g;
