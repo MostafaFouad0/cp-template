@@ -1,4 +1,4 @@
-const int N=2e5+5;
+const int N=2e5+5; //number of nodes * 2
 int n,m,lowLink[N],dfn[N],timer,comp[N],root[N],_2satCom[N],_2sat[N];
 vector<int>adj[N];
 vector<vector<int>>components;
