@@ -1,4 +1,5 @@
 //O(sqrt(m)*logm)
+//x^k %m = A %m
 int power(int a, int b, int m) {
     int res = 1;
     while (b > 0) {
