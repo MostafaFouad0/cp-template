@@ -1,60 +1,43 @@
-const int N=2e5+5;
-int n,m,lowLink[N],dfn[N],timer,comp[N];
-vector<int>adj[N];
-vector<vector<int>>components;
-stack<int>st;
-bool in[N],vis[N];
-void dfs(int node)
-{
-    vis[node]=1;
-    for(auto it:adj[node])
-    {
-        if(!vis[it])
-        {
-            dfs(it);
+struct SCC {
+    int n, timer = 1, sz;
+    vector<vector<int>> adj, comp;
+    vector<int> in, low, id, st, compnu;
+    vector<bool> stacked;
+
+    SCC(int n) : n(n), sz(0) {};
+
+    void build(vector<vector<int>> &_adj) {
+        adj = _adj;
+        in.assign(n + 1, 0);
+        low.assign(n + 1, 0);
+        id.assign(n + 1, 0);
+        stacked.assign(n + 1, 0);
+        compnu.assign(n + 1, 0);
+
+        for (int u = 1; u <= n; ++u)
+            if (!in[u]) dfs(u);
+    }
+
+    void dfs(int u) {
+        in[u] = low[u] = timer++;
+        stacked[u] = 1;
+        st.push_back(u);
+
+        for (int &v: adj[u]) {
+            if (!in[v]) dfs(v), low[u] = min(low[u], low[v]);
+            else if (stacked[v]) low[u] = min(low[u], in[v]);
+        }
+
+        if (low[u] == in[u]) {
+            comp.push_back({});
+            int v = -1;
+            while (v != u) {
+                v = st.back(), st.pop_back(), stacked[v] = 0;
+                id[v] = sz;
+                comp.back().push_back(v);
+                compnu[v] = comp.size() - 1;
+            }
+            ++sz;
         }
     }
-}
-void trajan(int node)
-{
-    lowLink[node]=dfn[node]=timer++;
-    st.push(node);
-    in[node]=1;
-    for(auto it:adj[node])
-    {
-        if(dfn[it]==-1)
-        {
-            trajan(it);
-            lowLink[node]=min(lowLink[node],lowLink[it]);
-        }
-        else if(in[it])
-        {
-            lowLink[node]=min(lowLink[node],dfn[it]);
-        }
-    }
-    if(lowLink[node]==dfn[node])
-    {
-        vector<int>component={};
-        int x=-1;
-        while(x!=node)
-        {
-            x=st.top();
-            st.pop();
-            comp[x]=components.size();
-            in[x]=0;
-            component.push_back(x);
-        }
-        components.push_back(component);
-    }
-}
-void init()
-{
-    memset(dfn,-1,sizeof dfn);
-    for(int i=1;i<=n;i++)
-    {
-        if(dfn[i]==-1)
-        {
-            trajan(i);
-        }
-    }
-}
+};
