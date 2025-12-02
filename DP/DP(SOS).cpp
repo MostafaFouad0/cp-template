@@ -40,4 +40,29 @@ for(int mask = 0; mask < (1<<N); ++mask){
 	F[mask] = dp[mask][N-1];
 }
 
+//DP over divisors  O(primes*divisors!)
+void dv_of_dv(int x, vector<int> &p, vector<int> &c, vector<int> &dv) {
+    vector<int> cnt;
+    for (int i = 2; i * i <= x; ++i) {
+        if (x % i == 0) p.emplace_back(i), cnt.emplace_back(0);
+        while (x % i == 0) x /= i, cnt.back()++;
+    }
+    if (x > 1)p.emplace_back(x), cnt.emplace_back(1);
+    dv.emplace_back(1);
+    for (int i = 0; i < p.size(); ++i) {
+        c.emplace_back(dv.size());
+        for (int j = 0; j < c.back() * cnt[i]; ++j) {
+            dv.emplace_back(dv[j] * p[i]);
+        }
+	}
+}
 
+void solve() {
+	for (int ia = 0; ia < c.size(); ++ia) {
+        for (int i = dv.size() - 1; i >= 0; --i) {
+            if (da[i] % p[ia]) continue;
+            dp[i - c[ia]] += dp[i];
+        }
+    }
+}
+//
