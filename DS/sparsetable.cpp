@@ -14,3 +14,9 @@ int query(int l, int r) {
     int pw = log2(r - l + 1); // could be better by precomputation
     return (st[l][pw] & st[r - (1 << (pw)) + 1][pw]);
 }
+
+void preprocess(){
+    for (int i = 2; i < N; ++i) {
+        LG[i] = LG[i / 2] + 1;
+    }
+}
