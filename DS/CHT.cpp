@@ -1,5 +1,5 @@
 //to get max of (m*x + y) 
-// if you want min - > type=-1 and when querying the result is -query(x)
+// if you want min - > type=-1 
 
 struct Line {
     mutable int k, m, p;
