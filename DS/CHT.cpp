@@ -38,6 +38,7 @@ struct HullDynamic : multiset<Line, less<> > {
             isect(x, erase(y));
     }
 
+    //the x negative can't be used
     ll query(ll x) {
         assert(!empty());
         auto l = *lower_bound(x);
