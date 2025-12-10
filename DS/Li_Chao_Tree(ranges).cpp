@@ -76,30 +76,34 @@ struct node {
 };
 
 struct LiChaoTree {
-    int L, R;
+    int L, R, type;
     node *root;
 
     LiChaoTree() : L(numeric_limits<int>::min() / 2), R(numeric_limits<int>::max() / 2), root(nullptr) {}
 
-    LiChaoTree(int L, int R) : L(L), R(R) {
+    LiChaoTree(int L, int R, int type) : L(L), R(R), type(type) {//to get max-> -1 , min->1
         root = new node({0, inf});
     }
 
     void add_line(Line line) {
+        line.c *= type;
+        line.m *= type;
         root->add_segment(line, L, R, L, R);
     }
 
     // y = mx + b: x in [l, r]
     void add_segment(Line line, int l, int r) {
+        line.c *= type;
+        line.m *= type;
         root->add_segment(line, L, R, l, r);
     }
 
     ll query(ll x) {
-        return root->query_segment(x, L, R, L, R);
+        return root->query_segment(x, L, R, L, R) * type;
     }
 
     ll query_segment(ll x, int l, int r) {
-        return root->query_segment(x, l, r, L, R);
+        return root->query_segment(x, l, r, L, R) * type;
     }
 };
 
