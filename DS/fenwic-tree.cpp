@@ -2,7 +2,7 @@ struct BIT {
     vector<int> bit;
     int size;
 
-    BIT(int n) : size(n), bit(n + 1) {}
+    BIT(int n) : size(n), bit(n) {}
 
     void add(int i, int x) {
         for (int j = i; j < size; j += j & -j) bit[j] += x;
