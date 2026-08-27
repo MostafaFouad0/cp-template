@@ -1,3 +1,4 @@
+//for directed
 #include <bits/stdc++.h>
 
 #define Pc_champs ios_base::sync_with_stdio(false);cout.tie(NULL);cin.tie(NULL);
