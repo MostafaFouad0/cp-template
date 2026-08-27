@@ -1,4 +1,5 @@
 ///  O(N + M)
+//for undirected graph
 int n;
 vector<vector<int>> adj;
 
