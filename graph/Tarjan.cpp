@@ -1,3 +1,4 @@
+//for directed
 struct SCC {
     int n, timer = 1, sz;
     vector<vector<int>> adj, comp;
